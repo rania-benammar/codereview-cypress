@@ -1,0 +1,3 @@
+cypress/reports/** linguist-generated
+cypress/screenshots/** linguist-generated
+cypress/videos/** linguist-generated
