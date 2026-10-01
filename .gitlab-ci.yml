@@ -1,0 +1,41 @@
+include:
+  - project: "commons-acp/tools"
+    file: "gitlab-ci/ci-npm.yml"
+    ref: "master"
+
+variables:
+  NODE_ENV: "test"
+
+cypress_smoke_manual:
+  stage: validate
+
+  image:
+    name: cypress/included:13.17.0
+    entrypoint: [""]
+
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: manual
+    - when: never
+
+  before_script:
+    - node -v
+    - npm -v
+    - npm ci
+    - mkdir -p cypress/videos cypress/screenshots cypress/results cypress/logs
+
+  script:
+    - npx cypress run
+
+  after_script:
+    - mkdir -p test-artifacts
+    - cp -r cypress/videos test-artifacts/ 2>/dev/null || true
+    - cp -r cypress/screenshots test-artifacts/ 2>/dev/null || true
+    - cp -r cypress/results test-artifacts/ 2>/dev/null || true
+    - cp -r cypress/logs test-artifacts/ 2>/dev/null || true
+
+  artifacts:
+    when: always
+    expire_in: 14 days
+    paths:
+      - test-artifacts/
